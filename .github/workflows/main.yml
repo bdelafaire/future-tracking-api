@@ -1,0 +1,80 @@
+name: ASP.NET Core CI
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: future-tracking-app-cluster
+  GKE_ZONE: europe-west1-b
+  IMAGE: future-tracking-app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+
+    - name: Build with dotnet
+      run: |
+        dotnet build ./Recette.WebApi.sln --configuration Release -o /app/build
+        dotnet test ./Recette.WebApi.sln --configuration Release
+
+  build-docker-image: 
+    runs-on: ubuntu-latest  
+    needs:  build
+    name: Build and push Docker container
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Build Docker container
+      run: docker build -f Dockerfile -t future-tracking-api . --tag gcr.io/$GKE_PROJECT/$IMAGE
+  
+    - name: install python-openssl
+      run: sudo apt-get install -y python-openssl -o=Dpkg::Use-Pty=0
+  
+    - name: Setup gcloud environment
+      uses: GoogleCloudPlatform/github-actions@0.1.1
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+    - run: gcloud auth configure-docker
+  
+    - name: Publish
+      run: docker push gcr.io/$GKE_PROJECT/$IMAGE
+        
+  deploy-to-kubernetes:
+    runs-on: ubuntu-latest
+    needs: build-docker-image
+    name: Deploy to kubernetes
+    steps:
+    - name: Setup gcloud environment
+      uses: GoogleCloudPlatform/github-actions@0.1.1
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+  
+    - uses: actions/checkout@v2
+      with:
+        repository: 'ptaiton/kubernetes-job-definitions'
+        path: 'kustomize-settings'
+  
+    - name: Get kustomize project settings
+      run: mv ./kustomize-settings/future-tracking-api/* ./
+  
+    - name: Set up Kustomize
+      run: |
+        curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+  
+    - name: Deploy
+      run: |
+        gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+        ./kustomize edit set image gcr.io/GKE_PROJECT/IMAGE=gcr.io/$GKE_PROJECT/$IMAGE
+        ./kustomize build . | kubectl apply -f -
+        kubectl get services -o wide
