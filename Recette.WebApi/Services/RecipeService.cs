@@ -32,6 +32,7 @@ namespace Recette.WebApi.Services
                 recipeViewModel.Id = recipe.Id;
                 recipeViewModel.Name = recipe.Name;
                 recipeViewModel.NumberOfPersons = recipe.NumberOfPersons;
+                
             }
             return new List<RecipeViewModel>();
         }

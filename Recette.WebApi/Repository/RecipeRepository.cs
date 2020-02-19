@@ -13,5 +13,11 @@ namespace Recette.WebApi.Repository
         {
             
         }
+
+        public List<Recipe> GetRecipesById()
+        {
+            var result =  _appDbContext.Set<Recipe>().Where(r => r.Id == "toto");
+            return result.ToList();
+        }
     }
 }

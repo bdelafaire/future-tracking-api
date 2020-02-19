@@ -4,6 +4,7 @@ using PdfSharp.Pdf.Advanced;
 using Recette.WebApi.Models;
 using Recette.WebApi.Repository;
 using Recette.WebApi.Services;
+using SelectPdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,9 +42,21 @@ namespace Recette.WebApi.Controllers
                 result.Steps = resultStep.ToList();
                 recipes.Add(result);
             }
-            var toto = _pdfGeneratorService.ToHtmlString(recipes, pdf.Title);
+            var html = _pdfGeneratorService.ToHtmlString(recipes, pdf.Title);
 
-            return Ok(toto);
+            MemoryStream memoryStream = new MemoryStream();
+            TextWriter tw = new StreamWriter(memoryStream);
+
+            HtmlToPdf converter = new HtmlToPdf();
+            //tw.WriteLine(html);
+            SelectPdf.PdfDocument doc = converter.ConvertHtmlString(html);
+
+            doc.Save(memoryStream);
+            doc.Close();
+            memoryStream.Position = 0;
+
+            FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf");
+            return fileStreamResult;
 
 
             //MemoryStream memory = new MemoryStream();
@@ -74,11 +87,16 @@ namespace Recette.WebApi.Controllers
             MemoryStream memoryStream = new MemoryStream();
             TextWriter tw = new StreamWriter(memoryStream);
 
-            tw.WriteLine(html);
-            tw.Flush();
-            tw.Close();
+            HtmlToPdf converter = new HtmlToPdf();
+            //tw.WriteLine(html);
+            SelectPdf.PdfDocument doc = converter.ConvertHtmlString(html);
 
-            return File(memoryStream.GetBuffer(), "text/plain", "file.html");
+            doc.Save(memoryStream);
+            doc.Close();
+            memoryStream.Position = 0;
+
+            FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf");
+            return fileStreamResult;
 
         }
 
