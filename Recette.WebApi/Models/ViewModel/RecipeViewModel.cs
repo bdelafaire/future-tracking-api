@@ -10,13 +10,13 @@ namespace Recette.WebApi.Models.ViewModel
         public string Id { get; set; }
         public string Name { get; set; }
         public int NumberOfPersons { get; set; }
-        public List<IngredientViewModel> ingredientViewModels { get; set; }
-        public List<StepViewModel> stepViewModels { get; set; }
+        public List<IngredientViewModel> Ingredients { get; set; }
+        public List<StepViewModel> Steps { get; set; }
 
         public RecipeViewModel()
         {
-            ingredientViewModels = new List<IngredientViewModel>();
-            stepViewModels = new List<StepViewModel>();
+            Ingredients = new List<IngredientViewModel>();
+            Steps = new List<StepViewModel>();
         }
     }
 }

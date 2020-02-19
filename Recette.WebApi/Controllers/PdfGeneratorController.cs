@@ -31,11 +31,11 @@ namespace Recette.WebApi.Controllers
         }
         
         [HttpPost]
-        [Route("/api/topdf")]
+        [Route("/cookbook")]
         public async Task<ActionResult> DownloadPdf([FromBody]PdfModel pdf)
         {
             List<Recipe> recipes = new List<Recipe>();
-            foreach (string recipe in pdf.RecipesId)
+            foreach (string recipe in pdf.Recipes)
             {
                 var result = await _recipeSevice.GetById(recipe);
                 var resultStep = await _stepService.GetAll();

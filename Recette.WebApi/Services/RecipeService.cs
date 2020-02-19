@@ -11,10 +11,14 @@ namespace Recette.WebApi.Services
     public class RecipeService : IRecipeService
     {
         IAsyncRepository<Recipe> _recipeRepo;
+        IStepRepository _stepRepository;
+        IIngredientRepository _ingredientRepository;
 
-        public RecipeService (IAsyncRepository<Recipe> recipe)
+        public RecipeService (IAsyncRepository<Recipe> recipe, IStepRepository stepRepository, IIngredientRepository ingredientRepository)
         {
             _recipeRepo = recipe;
+            _stepRepository = stepRepository;
+            _ingredientRepository = ingredientRepository;
         }
 
         public async Task<Recipe> GetById(string id)
@@ -32,9 +36,28 @@ namespace Recette.WebApi.Services
                 recipeViewModel.Id = recipe.Id;
                 recipeViewModel.Name = recipe.Name;
                 recipeViewModel.NumberOfPersons = recipe.NumberOfPersons;
-                
+                var stepresult = _stepRepository.GetByRecipeId(recipe.Id);
+                foreach (Step step in stepresult)
+                {
+                    StepViewModel localstep = new StepViewModel();
+                    localstep.Id = step.Id;
+                    localstep.Description = step.Description;
+                    localstep.Number = step.Number;
+                    recipeViewModel.Steps.Add(localstep);
+                }
+
+                var ingredientresult = _ingredientRepository.GetByRecipeId(recipe.Id);
+                foreach ( Ingredient item in ingredientresult)
+                {
+                    IngredientViewModel localIngredient = new IngredientViewModel();
+                    localIngredient.Id = item.Id;
+                    localIngredient.Name = item.Name;
+                    recipeViewModel.Ingredients.Add(localIngredient);
+                }
+
+                recipes.Add(recipeViewModel);
             }
-            return new List<RecipeViewModel>();
+            return recipes;
         }
     }
 }

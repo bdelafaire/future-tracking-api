@@ -35,6 +35,8 @@ namespace Recette.WebApi
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IStepService, StepService>();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(EfRepository<>));
+            services.AddScoped<IStepRepository, StepRepository>();
+            services.AddScoped<IIngredientRepository, IngredientRepository>();
             // If using Kestrel:
             services.Configure<KestrelServerOptions>(options =>
             {

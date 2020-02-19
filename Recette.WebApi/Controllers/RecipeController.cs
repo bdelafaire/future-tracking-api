@@ -13,10 +13,12 @@ namespace Recette.WebApi.Controllers
     public class RecipeController : Controller
     {
         IRecipeService _recipeService;
+        IStepService _stepservice;
         
-        public RecipeController(IRecipeService recipe)
+        public RecipeController(IRecipeService recipe, IStepService stepService)
         {
             _recipeService = recipe;
+            _stepservice = stepService;
             
         }
 

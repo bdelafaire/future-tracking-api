@@ -9,11 +9,11 @@ namespace Recette.WebApi.Models
     [NotMapped]
     public class PdfModel
     {
-        public List<string> RecipesId { get; set; }
+        public List<string> Recipes{ get; set; }
         public string Title { get; set; }
         public PdfModel()
         {
-            RecipesId = new List<string>();
+            Recipes = new List<string>();
         }
     }
 }
