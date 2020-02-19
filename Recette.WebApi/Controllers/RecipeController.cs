@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Recette.WebApi.Models.ViewModel;
 using Recette.WebApi.Services;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace Recette.WebApi.Controllers
         public async Task<ActionResult> GetAll()
         {
             var result = await _recipeService.GetRecipes();
+
             return Ok(result);
         }
 

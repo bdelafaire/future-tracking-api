@@ -1,4 +1,5 @@
 ﻿using Recette.WebApi.Models;
+using Recette.WebApi.Models.ViewModel;
 using Recette.WebApi.Repository;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,18 @@ namespace Recette.WebApi.Services
             return await _recipeRepo.GetByIdAsync(id);
         }
 
-        public async Task<IReadOnlyList<Recipe>> GetRecipes()
+        public async Task<IReadOnlyList<RecipeViewModel>> GetRecipes()
         {
-            return await _recipeRepo.ListAllAsync();
+            List<RecipeViewModel> recipes = new List<RecipeViewModel>();
+            var result = await _recipeRepo.ListAllAsync();
+            foreach (Recipe recipe in result)
+            {
+                RecipeViewModel recipeViewModel = new RecipeViewModel();
+                recipeViewModel.Id = recipe.Id;
+                recipeViewModel.Name = recipe.Name;
+                recipeViewModel.NumberOfPersons = recipe.NumberOfPersons;
+            }
+            return new List<RecipeViewModel>();
         }
     }
 }

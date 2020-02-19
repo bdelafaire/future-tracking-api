@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using Recette.WebApi.Data;
 using Recette.WebApi.Repository;
 using Recette.WebApi.Services;
+using Serilog;
 
 namespace Recette.WebApi
 {
@@ -51,8 +52,12 @@ namespace Recette.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            ILoggerFactory loggerfactory)
         {
+            loggerfactory.AddSerilog();
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 

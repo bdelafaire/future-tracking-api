@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Recette.WebApi.Controllers
@@ -66,20 +67,18 @@ namespace Recette.WebApi.Controllers
             var resultStep = await _stepService.GetAll();
             resultRecipe.Steps = resultStep.ToList();
             recipes.Add(resultRecipe);
-            var toto = _pdfGeneratorService.ToHtmlString(recipes, "toto");
+            var html = _pdfGeneratorService.ToHtmlString(recipes, "toto");
 
             //return Ok(toto);
 
+            MemoryStream memoryStream = new MemoryStream();
+            TextWriter tw = new StreamWriter(memoryStream);
 
-            MemoryStream memory = new MemoryStream();
-            using (FileStream stream = new FileStream(@"C:\Users\baptiste\Downloads", FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
+            tw.WriteLine(html);
+            tw.Flush();
+            tw.Close();
 
-            memory.Position = 0;
-
-            return File(memory, "application/force-download", "test.pdf");
+            return File(memoryStream.GetBuffer(), "text/plain", "file.html");
 
         }
 

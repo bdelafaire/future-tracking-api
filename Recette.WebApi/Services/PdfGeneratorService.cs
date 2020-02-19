@@ -24,7 +24,7 @@ public class PdfGeneratorService : IPdfGeneratorService
         //}).Concat("</body></html>");
 
         StringBuilder sb = new StringBuilder("<html><body><br>");
-        sb.Append($"<h1>{title}");
+        sb.Append($"<h1>{title}</h1>");
         foreach (Recipe recipe in recipes)
         {
             sb.Append("<ul>");

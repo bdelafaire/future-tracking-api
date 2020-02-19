@@ -20,7 +20,7 @@ namespace Recette.WebApi.Data.Configuration
             builder
                 .HasOne(ir => ir.Recipe)
                 .WithMany(r => r.IngredientRecipes)
-                .HasForeignKey(ir => ir.IngredientId);
+                .HasForeignKey(ir => ir.RecipeId);
         }
     }
 }

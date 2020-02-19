@@ -1,4 +1,5 @@
 ﻿using Recette.WebApi.Models;
+using Recette.WebApi.Models.ViewModel;
 using Recette.WebApi.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Recette.WebApi.Services
     public interface IRecipeService
     {
         Task<Recipe> GetById(string id);
-        Task<IReadOnlyList<Recipe>> GetRecipes();
+        Task<IReadOnlyList<RecipeViewModel>> GetRecipes();
 
     }
 }

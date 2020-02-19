@@ -9,7 +9,7 @@ namespace Recette.WebApi.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public int? NumberOfPersons { get; set; }
+        public int NumberOfPersons { get; set; }
         public ICollection<IngredientRecipe> IngredientRecipes { get; set; }
         public ICollection<Step> Steps { get; set; }
         public string ImageBase64 { get; set; }
