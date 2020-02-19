@@ -2,6 +2,7 @@
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.Advanced;
 using Recette.WebApi.Models;
+using Recette.WebApi.Models.ViewModel;
 using Recette.WebApi.Repository;
 using Recette.WebApi.Services;
 using SelectPdf;
@@ -34,13 +35,12 @@ namespace Recette.WebApi.Controllers
         [Route("/cookbook")]
         public async Task<ActionResult> DownloadPdf([FromBody]PdfModel pdf)
         {
-            List<Recipe> recipes = new List<Recipe>();
-            foreach (string recipe in pdf.Recipes)
+            List<RecipeViewModel> recipes = new List<RecipeViewModel>();
+            var result = await _recipeSevice.GetRecipes();
+            foreach (string item in pdf.Recipes)
             {
-                var result = await _recipeSevice.GetById(recipe);
-                var resultStep = await _stepService.GetAll();
-                result.Steps = resultStep.ToList();
-                recipes.Add(result);
+                var local = result.First(r => r.Id==item);
+                recipes.Add(local);
             }
             var html = _pdfGeneratorService.ToHtmlString(recipes, pdf.Title);
 
@@ -71,34 +71,34 @@ namespace Recette.WebApi.Controllers
 
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult> DownloadPdfRecipe(string id)
-        {
-            List<Recipe> recipes = new List<Recipe>();
-            var resultRecipe = await _recipeSevice.GetById(id);
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult> DownloadPdfRecipe(string id)
+        //{
+        //    //List<Recipe> recipes = new List<Recipe>();
+        //    //var resultRecipe = await _recipeSevice.GetById(id);
 
-            var resultStep = await _stepService.GetAll();
-            resultRecipe.Steps = resultStep.ToList();
-            recipes.Add(resultRecipe);
-            var html = _pdfGeneratorService.ToHtmlString(recipes, "toto");
+        //    //var resultStep = await _stepService.GetAll();
+        //    //resultRecipe.Steps = resultStep.ToList();
+        //    //recipes.Add(resultRecipe);
+        //    //var html = _pdfGeneratorService.ToHtmlString(recipes, "toto");
 
-            //return Ok(toto);
+        //    ////return Ok(toto);
 
-            MemoryStream memoryStream = new MemoryStream();
-            TextWriter tw = new StreamWriter(memoryStream);
+        //    //MemoryStream memoryStream = new MemoryStream();
+        //    //TextWriter tw = new StreamWriter(memoryStream);
 
-            HtmlToPdf converter = new HtmlToPdf();
-            //tw.WriteLine(html);
-            SelectPdf.PdfDocument doc = converter.ConvertHtmlString(html);
+        //    //HtmlToPdf converter = new HtmlToPdf();
+        //    ////tw.WriteLine(html);
+        //    //SelectPdf.PdfDocument doc = converter.ConvertHtmlString(html);
 
-            doc.Save(memoryStream);
-            doc.Close();
-            memoryStream.Position = 0;
+        //    //doc.Save(memoryStream);
+        //    //doc.Close();
+        //    //memoryStream.Position = 0;
 
-            FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf");
-            return fileStreamResult;
+        //    //FileStreamResult fileStreamResult = new FileStreamResult(memoryStream, "application/pdf");
+        //    //return fileStreamResult;
 
-        }
+        //}
 
     }
 }

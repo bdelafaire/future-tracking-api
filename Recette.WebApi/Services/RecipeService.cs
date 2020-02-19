@@ -26,7 +26,7 @@ namespace Recette.WebApi.Services
             return await _recipeRepo.GetByIdAsync(id);
         }
 
-        public async Task<IReadOnlyList<RecipeViewModel>> GetRecipes()
+        public async Task<IEnumerable<RecipeViewModel>> GetRecipes()
         {
             List<RecipeViewModel> recipes = new List<RecipeViewModel>();
             var result = await _recipeRepo.ListAllAsync();

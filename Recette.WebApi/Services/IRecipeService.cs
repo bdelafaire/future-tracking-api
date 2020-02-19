@@ -11,7 +11,7 @@ namespace Recette.WebApi.Services
     public interface IRecipeService
     {
         Task<Recipe> GetById(string id);
-        Task<IReadOnlyList<RecipeViewModel>> GetRecipes();
+        Task<IEnumerable<RecipeViewModel>> GetRecipes();
 
     }
 }

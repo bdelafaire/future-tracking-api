@@ -42,10 +42,9 @@ namespace Recette.WebApi
             {
                 options.AllowSynchronousIO = true;
             });
-            services.AddScoped<IPdfGeneratorService, PdfGeneratorService>();
-            services.AddDbContext<AppDbContext>(options =>
-            options.UseMySql($"server = localhost; port = 3306; database = recipe; user = {Environment.GetEnvironmentVariable("MYSQL_USER")}; password = {Environment.GetEnvironmentVariable("MYSQL_PASSWORD")}")
-            );
+            services.AddScoped<IPdfGeneratorService,PdfGeneratorService>();
+            services.AddDbContext<AppDbContext>(options => 
+            options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
