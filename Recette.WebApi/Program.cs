@@ -16,7 +16,7 @@ namespace Recette.WebApi
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-              .WriteTo.SumoLogic("https://endpoint1.collection.eu.sumologic.com/receiver/v1/http/ZaVnC4dhaV0Wn6Zzb0ulfpXgpUvw0u1AeNbCeFOmxk5JlBET94NOwz922152H4thfO_0bLFXEwAWTeZmqJ5O88CS0QsVR9ghq6CuLQ4M7A_-a9rvb040sA==")
+              .WriteTo.SumoLogic(Environment.GetEnvironmentVariable("SUMOLOGIC_ENDPOINT_URL"))
               .Enrich.FromLogContext()
               .CreateLogger();
             CreateHostBuilder(args).Build().Run();
